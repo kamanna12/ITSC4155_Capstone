@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basketball Player Stats</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+    <div class="flex">
+        <!-- Sidebar -->
+        <div class="w-1/4 bg-gray-800 p-6 min-h-screen">
+            <img src="static/images/player-image.jpg" alt="LeBron James" class="mt-4 w-64 h-48 rounded-full">
+            <br>
+            <div class="text-white text-3xl font-bold">LEBRON <span class="block">JAMES</span></div>
+            <div class="mt-4 text-gray-400">
+                <p><strong>AGE</strong>: 40</p>
+                <p><strong>HEIGHT</strong>: 6'9"</p>
+                <p><strong>WEIGHT</strong>: 250 lbs</p>
+                <p><strong>EXP</strong>: 21</p>
+            </div>
+            <!-- Moved Navigation to Bottom of Sidebar -->
+            <nav class="mt-6 space-y-4">
+                <a href="#" class="block text-gray-300 hover:text-white">Summary</a>
+                <a href="#" class="block text-gray-300 hover:text-white">Game Log</a>
+                <a href="#" class="block text-gray-300 hover:text-white">Team</a>
+                <a href="#" class="block text-gray-300 hover:text-white">Settings</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="w-3/4 p-6">
+            <div class="bg-gray-700 p-4 rounded-lg flex justify-between items-center">
+                <img src="team-logo.jpg" alt="Los Angeles Lakers" class="w-48">
+                <h1 class="text-4xl font-bold">Los Angeles Lakers</h1>
+            </div>
+            <div class="mt-6">
+                <h2 class="text-xl font-bold">Performance</h2>
+                <div class="flex space-x-4 mt-2">
+                    <div class="bg-gray-600 p-3 rounded">20 pts</div>
+                    <div class="bg-gray-600 p-3 rounded">40 reb</div>
+                    <div class="bg-gray-600 p-3 rounded">45 ast</div>
+                    <div class="bg-gray-600 p-3 rounded">80 stl</div>
+                </div>
+                <!-- Placeholder for Chart -->
+                <div class="bg-gray-700 mt-4 p-6 h-48 rounded-lg flex items-center justify-center">
+                    <img src="bar-chart-placeholder.jpg" alt="Bar Chart" class="w-full h-full">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-6">
+                <div class="bg-gray-700 p-6 h-32 rounded-lg"><img src="stat-box1.jpg" alt="Stat Box 1" class="w-full h-full"></div>
+                <div class="bg-gray-700 p-6 h-32 rounded-lg"><img src="stat-box2.jpg" alt="Stat Box 2" class="w-full h-full"></div>
+                <div class="bg-gray-700 p-6 h-32 rounded-lg"><img src="stat-box3.jpg" alt="Stat Box 3" class="w-full h-full"></div>
+                <div class="bg-gray-700 p-6 h-32 rounded-lg"><img src="stat-box4.jpg" alt="Stat Box 4" class="w-full h-full"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
