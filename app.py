@@ -1,13 +1,72 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import commonplayerinfo, playercareerstats
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = '824ecdf1b10812100f44e23c1bace70e'
+db = SQLAlchemy(app)
+
+# User model
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+
+# Create the database
+with app.app_context():
+    db.create_all()
 
 @app.route("/")
 def home_page():
     return render_template("home.html")
+
+# routing for signup
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if User.query.filter_by(username=username).first():
+            flash("Username already exists", "danger")
+        else:
+            new_user = User(username=username, password=generate_password_hash(password))
+            db.session.add(new_user)
+            db.session.commit()
+            flash("Account created successfully! You can now log in.", "success")
+            return redirect(url_for("login"))
+
+    return render_template("signup.html")
+
+# routing for login
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
+            session["user"] = username
+            flash("Logged in successfully!", "success")
+            return redirect(url_for("home_page"))
+        else:
+            flash("Invalid credentials", "danger")
+
+    return render_template("login.html")
+
+# routing for logout
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    flash("You have been logged out.", "info")
+    return redirect(url_for("home_page"))
+
 
 @app.route("/search", methods=["GET", "POST"])
 def search_page():
