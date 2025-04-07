@@ -2,3 +2,6 @@ flask
 nba_api
 requests
 pandas
+sqlalchemy
+flask_sqlalchemy
+gunicorn

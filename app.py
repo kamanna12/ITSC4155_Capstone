@@ -1,3 +1,4 @@
+import os;
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import commonplayerinfo, playercareerstats
