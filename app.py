@@ -1,5 +1,5 @@
 import os;
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import commonplayerinfo, playercareerstats
 from datetime import datetime
@@ -11,6 +11,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = '824ecdf1b10812100f44e23c1bace70e'
 db = SQLAlchemy(app)
+
+# Load all players at startup
+ALL_PLAYERS = players.get_players()
 
 # User model
 class User(db.Model):
@@ -67,6 +70,37 @@ def logout():
     session.pop("user", None)
     flash("You have been logged out.", "info")
     return redirect(url_for("home_page"))
+
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('q', '').strip().lower()
+    if not query:
+        return jsonify([])
+
+    # Filter: keep only player names containing the query
+    filtered = [p for p in ALL_PLAYERS if query in p["full_name"].lower()]
+
+    # Sort: "starts with" gets priority, then partial matches
+    def match_rank(player_name: str, q: str) -> int:
+        """
+        Returns 0 if player_name starts with the query,
+        1 if query is found anywhere else in player_name,
+        2 otherwise (shouldn't happen because we already filtered).
+        """
+        name_lower = player_name.lower()
+        if name_lower.startswith(q):
+            return 0
+        # We already know query is in the name from filtering,
+        # so any remaining matches are partial
+        return 1
+
+    # Sort the filtered list by match rank
+    filtered.sort(key=lambda p: match_rank(p["full_name"], query))
+
+    # Limit to 5 results
+    filtered = filtered[:5]
+
+    return jsonify(filtered)
 
 
 @app.route("/search", methods=["GET", "POST"])
