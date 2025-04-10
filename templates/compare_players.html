@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compare Players</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white font-sans min-h-screen flex items-center justify-center p-6">
+    <div class="bg-gray-800 p-8 rounded shadow-md w-full max-w-md">
+        <h1 class="text-3xl font-bold mb-6 text-center">Compare NBA Players</h1>
+        <form method="POST" action="/compare" class="space-y-4">
+            <div>
+                <label for="player1" class="block mb-1 text-gray-300">Player 1:</label>
+                <input type="text" id="player1" name="player1"
+                    class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter first player name" required />
+            </div>
+            <div>
+                <label for="player2" class="block mb-1 text-gray-300">Player 2:</label>
+                <input type="text" id="player2" name="player2"
+                    class="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Enter second player name" required />
+            </div>
+            <div class="text-center">
+                <button type="submit"
+                    class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded font-semibold transition-colors">
+                    Compare
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>
