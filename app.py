@@ -240,31 +240,5 @@ def compare_results():
                        stats1_json=stats1.to_dict(orient='records'),
                        stats2_json=stats2.to_dict(orient='records'))
 
-#@app.route('/compare_results')
-#def compare_results():
-    player1_name = request.args.get('player1', '').strip()
-    player2_name = request.args.get('player2', '').strip()
-
-    def get_player_data(name):
-        all_players = players.get_players()
-        match = next((p for p in all_players if name.lower() in p['full_name'].lower()), None)
-        if not match:
-            return None, None
-        pid = match['id']
-        stats = playercareerstats.PlayerCareerStats(player_id=pid).get_data_frames()[0]
-        stats = stats[stats["SEASON_ID"] != "Career"]
-        return match['full_name'], stats
-
-    name1, stats1 = get_player_data(player1_name)
-    name2, stats2 = get_player_data(player2_name)
-
-    if stats1.empty or stats2.empty:
-        flash("One or both players could not be found.", "danger")
-        return redirect(url_for("compare_players"))
-
-    return render_template('compare_player_results.html',
-                           name1=name1, stats1=stats1,
-                           name2=name2, stats2=stats2)
-
 if __name__ == "__main__":
     app.run(debug=True)
