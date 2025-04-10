@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from nba_api.stats.static import players
 from nba_api.stats.endpoints import commonplayerinfo, playercareerstats, playergamelog
@@ -6,6 +7,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 import matplotlib.pyplot as plt
 
+=======
+import os;
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
+from nba_api.stats.static import players
+from nba_api.stats.endpoints import commonplayerinfo, playercareerstats
+from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_sqlalchemy import SQLAlchemy
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -13,6 +23,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = '824ecdf1b10812100f44e23c1bace70e'
 db = SQLAlchemy(app)
 
+<<<<<<< HEAD
+=======
+# Load all players at startup
+ALL_PLAYERS = players.get_players()
+
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90
 # User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -69,6 +85,40 @@ def logout():
     flash("You have been logged out.", "info")
     return redirect(url_for("home_page"))
 
+<<<<<<< HEAD
+=======
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    query = request.args.get('q', '').strip().lower()
+    if not query:
+        return jsonify([])
+
+    # Filter: keep only player names containing the query
+    filtered = [p for p in ALL_PLAYERS if query in p["full_name"].lower()]
+
+    # Sort: "starts with" gets priority, then partial matches
+    def match_rank(player_name: str, q: str) -> int:
+        """
+        Returns 0 if player_name starts with the query,
+        1 if query is found anywhere else in player_name,
+        2 otherwise (shouldn't happen because we already filtered).
+        """
+        name_lower = player_name.lower()
+        if name_lower.startswith(q):
+            return 0
+        # We already know query is in the name from filtering,
+        # so any remaining matches are partial
+        return 1
+
+    # Sort the filtered list by match rank
+    filtered.sort(key=lambda p: match_rank(p["full_name"], query))
+
+    # Limit to 5 results
+    filtered = filtered[:5]
+
+    return jsonify(filtered)
+
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90
 
 @app.route("/search", methods=["GET", "POST"])
 def search_page():
@@ -156,6 +206,7 @@ def player_stats():
         chart_fgpct=fg_percentage
     )
 
+<<<<<<< HEAD
 
 # Route for comparing players
 @app.route('/compare', methods=['GET', 'POST'])
@@ -232,5 +283,7 @@ def compare_results():
 
 
 
+=======
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90
 if __name__ == "__main__":
     app.run(debug=True)

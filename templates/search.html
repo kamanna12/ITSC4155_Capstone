@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NBA Player Search</title>
     <script src="https://cdn.tailwindcss.com"></script>
+<<<<<<< HEAD
+=======
+    <script src="{{ url_for('static', filename='js/autocomplete.js') }}" defer></script>
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90
 </head>
 
 <body class="bg-gray-900 text-white font-sans min-h-screen flex items-center justify-center">
@@ -30,15 +34,36 @@
 
         <!-- Search Form -->
         <form method="POST" action="/search" class="flex flex-col space-y-4">
+<<<<<<< HEAD
             <input type="text" name="player_name" placeholder="Type a player's name (e.g. LeBron James)"
                 class="px-3 py-2 bg-gray-700 text-white rounded focus:outline-none" />
+=======
+            <!-- Autocomplete Input Container -->
+            <div class="relative">
+                <input type="text" id="searchInput" name="player_name" placeholder="Type a player's name (e.g. LeBron James)"
+                    class="px-3 py-2 bg-gray-700 text-white rounded focus:outline-none w-full" />
+                <!-- Suggestions box: displays autocomplete results -->
+                <div id="suggestionBox" class="absolute w-full bg-gray-700 rounded shadow-lg mt-1" style="z-index: 999;">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Search Button -->
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90
             <button type="submit" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 transition-colors">
                 Search
             </button>
         </form>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90
     </div>
 
 </body>
 
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90

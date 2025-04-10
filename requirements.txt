@@ -1,4 +1,11 @@
 flask
 nba_api
 requests
+<<<<<<< HEAD
 pandas
+=======
+pandas
+sqlalchemy
+flask_sqlalchemy
+gunicorn
+>>>>>>> 04c74a090c218a43e0a18ade0467e29e5b96ca90
