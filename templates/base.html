@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}NBA Analytics{% endblock %}</title>
+    <!-- Include Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block head %}{% endblock %}
+  </head>
+  <body class="bg-gray-900 text-white">
+    {% block content %}
+    {% endblock %}
+
+    <!-- Chatbot -->
+    <div id="chatbot-container" class="fixed bottom-6 right-6">
+      <button id="chatbot-toggle" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg">
+        Chat
+      </button>
+      <div id="chatbot-window" class="hidden fixed bottom-20 right-6 max-w-sm w-full bg-gray-800 rounded shadow-lg overflow-hidden">
+        <div class="p-4 border-b border-gray-700">
+          <h3 class="text-lg font-bold">How can I help you?</h3>
+        </div>
+        <div id="chatbot-messages" class="p-4 h-64 overflow-y-auto"></div>
+        <form id="chatbot-form" class="flex border-t border-gray-700">
+          <input type="text" id="chatbot-input" placeholder="Type your question..."
+                 class="flex-grow p-3 bg-gray-700 text-white outline-none" />
+          <button type="submit" class="bg-blue-600 hover:bg-blue-700 p-3">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Load external JavaScript for chatbot  -->
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

@@ -240,5 +240,39 @@ def compare_results():
                        stats1_json=stats1.to_dict(orient='records'),
                        stats2_json=stats2.to_dict(orient='records'))
 
+@app.route('/chat', methods=['POST'])
+def chatbot():
+    data = request.get_json()
+    if not data or 'query' not in data:
+        return jsonify({'response': 'Invalid query provided.'}), 400
+
+    query = data['query'].strip().lower()
+    print("Received chatbot query:", query)
+    
+    if "compare" in query:
+        response_text = (
+            "You can compare players using our Compare Players page. "
+            "Just click on the 'Compare Players' button to get started!"
+        )
+    elif "login" in query:
+        response_text = "You can log in to your account by visiting our Login page."
+    elif "signup" in query or "sign up" in query:
+        response_text = "If you don't have an account yet, you can sign up on our Signup page!"
+    elif "stats" in query:
+        response_text = "You can check player stats by visiting our Search page."
+    elif any(greeting in query for greeting in ["hi", "hello", "hey"]):
+        response_text = "Hello! How can I help you today?"
+    else:
+        response_text = "I'm not sure I understand that. Could you try rephrasing?"
+
+    return jsonify({'response': response_text})
+
+# New route for a standalone chatbot page
+@app.route('/chat_page')
+def chat_page():
+    return render_template("chat.html")
+
+
+
 if __name__ == "__main__":
     app.run(debug=True)
