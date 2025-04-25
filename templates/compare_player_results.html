@@ -1,123 +1,121 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Comparison Results</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-            padding: 6px;
-        }
-        .chart-container {
-            width: 400px;
-            height: 300px;
-            margin-bottom: 30px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Player Comparison</h1>
+{% extends "base.html" %}
 
-    <h2>{{ name1 }} - Last 5 Games</h2>
-    <table>
-        <tr><th>Date</th><th>PTS</th><th>AST</th><th>REB</th></tr>
+{% block title %}Comparison Results{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-screen px-4 py-10">
+  <h1 class="text-4xl font-bold mb-8 text-center">Player Comparison</h1>
+
+  <!-- Player 1 -->
+  <h2 class="text-2xl font-semibold mb-4 text-blue-300">{{ name1 }} - Last 5 Games</h2>
+  <div class="overflow-x-auto w-full max-w-3xl mb-8">
+    <table class="min-w-full bg-gray-800 rounded shadow">
+      <thead>
+        <tr class="bg-gray-700 text-white text-left">
+          <th class="py-2 px-4">Date</th>
+          <th class="py-2 px-4">PTS</th>
+          <th class="py-2 px-4">AST</th>
+          <th class="py-2 px-4">REB</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for index, row in stats1.iterrows() %}
-        <tr>
-            <td>{{ row['GAME_DATE'] }}</td>
-            <td>{{ row['PTS'] }}</td>
-            <td>{{ row['AST'] }}</td>
-            <td>{{ row['REB'] }}</td>
+        <tr class="border-t border-gray-700">
+          <td class="py-2 px-4">{{ row['GAME_DATE'] }}</td>
+          <td class="py-2 px-4">{{ row['PTS'] }}</td>
+          <td class="py-2 px-4">{{ row['AST'] }}</td>
+          <td class="py-2 px-4">{{ row['REB'] }}</td>
         </tr>
         {% endfor %}
+      </tbody>
     </table>
-    <div class="chart-container">
-        <canvas id="chart1"></canvas>
-    </div>
+  </div>
+  <div class="w-full max-w-lg mb-12">
+    <canvas id="chart1" class="w-full h-64"></canvas>
+  </div>
 
-    <h2>{{ name2 }} - Last 5 Games</h2>
-    <table>
-        <tr><th>Date</th><th>PTS</th><th>AST</th><th>REB</th></tr>
+  <!-- Player 2 -->
+  <h2 class="text-2xl font-semibold mb-4 text-green-300">{{ name2 }} - Last 5 Games</h2>
+  <div class="overflow-x-auto w-full max-w-3xl mb-8">
+    <table class="min-w-full bg-gray-800 rounded shadow">
+      <thead>
+        <tr class="bg-gray-700 text-white text-left">
+          <th class="py-2 px-4">Date</th>
+          <th class="py-2 px-4">PTS</th>
+          <th class="py-2 px-4">AST</th>
+          <th class="py-2 px-4">REB</th>
+        </tr>
+      </thead>
+      <tbody>
         {% for index, row in stats2.iterrows() %}
-        <tr>
-            <td>{{ row['GAME_DATE'] }}</td>
-            <td>{{ row['PTS'] }}</td>
-            <td>{{ row['AST'] }}</td>
-            <td>{{ row['REB'] }}</td>
+        <tr class="border-t border-gray-700">
+          <td class="py-2 px-4">{{ row['GAME_DATE'] }}</td>
+          <td class="py-2 px-4">{{ row['PTS'] }}</td>
+          <td class="py-2 px-4">{{ row['AST'] }}</td>
+          <td class="py-2 px-4">{{ row['REB'] }}</td>
         </tr>
         {% endfor %}
+      </tbody>
     </table>
-    <div class="chart-container">
-        <canvas id="chart2"></canvas>
-    </div>
+  </div>
+  <div class="w-full max-w-lg">
+    <canvas id="chart2" class="w-full h-64"></canvas>
+  </div>
+</div>
+{% endblock %}
 
-    <script>
-        const stats1 = {{ stats1_json | tojson | safe }};
-        const stats2 = {{ stats2_json | tojson | safe }};
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const stats1 = {{ stats1_json | tojson | safe }};
+  const stats2 = {{ stats2_json | tojson | safe }};
 
-        function extractData(stats) {
-            return {
-                labels: stats.map(g => g.GAME_DATE),
-                points: stats.map(g => g.PTS),
-                assists: stats.map(g => g.AST),
-                rebounds: stats.map(g => g.REB)
-            };
+  function extractData(stats) {
+    return {
+      labels: stats.map(g => g.GAME_DATE),
+      points: stats.map(g => g.PTS),
+      assists: stats.map(g => g.AST),
+      rebounds: stats.map(g => g.REB)
+    };
+  }
+
+  const player1Data = extractData(stats1);
+  const player2Data = extractData(stats2);
+
+  const config = (labels, points, assists, rebounds, playerName) => ({
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: playerName + ' PTS',
+          data: points,
+          backgroundColor: 'rgba(255, 99, 132, 0.6)'
+        },
+        {
+          label: playerName + ' AST',
+          data: assists,
+          backgroundColor: 'rgba(54, 162, 235, 0.6)'
+        },
+        {
+          label: playerName + ' REB',
+          data: rebounds,
+          backgroundColor: 'rgba(75, 192, 192, 0.6)'
         }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
 
-        const player1Data = extractData(stats1);
-        const player2Data = extractData(stats2);
-
-        const config = (labels, points, assists, rebounds, playerName) => ({
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: playerName + ' PTS',
-                        data: points,
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
-                    },
-                    {
-                        label: playerName + ' AST',
-                        data: assists,
-                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
-                    },
-                    {
-                        label: playerName + ' REB',
-                        data: rebounds,
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            font: {
-                                size: 12
-                            }
-                        }
-                    }
-                }
-            }
-        });
-
-        new Chart(
-            document.getElementById('chart1'),
-            config(player1Data.labels, player1Data.points, player1Data.assists, player1Data.rebounds, "{{ name1 }}")
-        );
-
-        new Chart(
-            document.getElementById('chart2'),
-            config(player2Data.labels, player2Data.points, player2Data.assists, player2Data.rebounds, "{{ name2 }}")
-        );
-    </script>
-</body>
-</html>
+  new Chart(document.getElementById('chart1'), config(player1Data.labels, player1Data.points, player1Data.assists, player1Data.rebounds, "{{ name1 }}"));
+  new Chart(document.getElementById('chart2'), config(player2Data.labels, player2Data.points, player2Data.assists, player2Data.rebounds, "{{ name2 }}"));
+</script>
+{% endblock %}

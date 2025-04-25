@@ -9,6 +9,18 @@
     {% block head %}{% endblock %}
   </head>
   <body class="bg-gray-900 text-white">
+    
+
+{% if request.endpoint != 'home_page' %}
+  <div class="absolute top-4 left-4">
+    <a href="javascript:history.back()" 
+       class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white transition">
+       ← Back
+    </a>
+  </div>
+{% endif %}
+
+
     {% block content %}
     {% endblock %}
 
