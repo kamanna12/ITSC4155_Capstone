@@ -2,8 +2,8 @@ flask
 nba_api
 requests
 pandas
-pandas
 sqlalchemy
 flask_sqlalchemy
 gunicorn
 matplotlib
+pytest

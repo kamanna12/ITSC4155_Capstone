@@ -3,9 +3,9 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="flex flex-col items-center justify-center min-h-screen p-6">
+<div class="flex flex-col items-center justify-start p-6 pt-6">
   <div class="text-center mb-6">
-    <img src="/static/images/logo.png" alt="DribbleData" class="mx-auto h-64 mb-2" />
+    <img src="/static/images/logo.png" alt="DribbleData" class="mx-auto h-32 mb-2" />
   </div>
 
   <!-- Carousel -->
@@ -43,25 +43,25 @@
       <a href="{{ url_for('search_page') }}"
          class="px-8 py-3 text-white text-xl rounded"
          class="px-8 py-3 text-white text-xl rounded shadow-lg"
-         style="background-color: #322110;"
-         onmouseover="this.style.backgroundColor='#5a3a1f'"
-         onmouseout="this.style.backgroundColor='#3C2814'">
+         style="background-color: #d57240;"
+         onmouseover="this.style.backgroundColor='#b85423'"
+         onmouseout="this.style.backgroundColor='#d57240'">
          SEARCH
       </a>
 
       <a href="{{ url_for('compare_players') }}"
          class="px-8 py-3 text-white text-xl rounded"
          class="px-8 py-3 text-white text-xl rounded shadow-lg"
-         style="background-color: #322110;"
-         onmouseover="this.style.backgroundColor='#5a3a1f'"
-         onmouseout="this.style.backgroundColor='#3C2814'">
+         style="background-color: #d57240;"
+         onmouseover="this.style.backgroundColor='#b85423'"
+         onmouseout="this.style.backgroundColor='#d57240'">
          COMPARE PLAYERS
       </a>
 
       <a href="{{ url_for('logout') }}"
          class="px-8 py-3 text-white text-xl rounded"
          class="px-8 py-3 text-white text-xl rounded shadow-lg"
-         style="background-color: #262525;"
+         style="background-color: #ce1d1d;"
          onmouseover="this.style.backgroundColor='#b91c1c'"
          onmouseout="this.style.backgroundColor='#dc2626'">
          LOGOUT
@@ -70,7 +70,7 @@
       <a href="{{ url_for('signup') }}"
          class="px-8 py-3 text-white text-xl rounded"
          class="px-8 py-3 text-white text-xl rounded shadow-lg"
-         style="background-color: #262525;"
+         style="background-color: #17a34a;"
          onmouseover="this.style.backgroundColor='#15803d'"
          onmouseout="this.style.backgroundColor='#16a34a'">
          SIGN UP
@@ -79,7 +79,7 @@
       <a href="{{ url_for('login') }}"
          class="px-8 py-3 text-white text-xl rounded"
          class="px-8 py-3 text-white text-xl rounded shadow-lg"
-         style="background-color: #262525;"
+         style="background-color: #2563ea;"
          onmouseover="this.style.backgroundColor='#1d4ed8'"
          onmouseout="this.style.backgroundColor='#2563eb'">
          LOGIN
@@ -95,43 +95,20 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script src="{{ url_for('static', filename='js/carouselSlide.js') }}"></script>
+
 
 <script>
-$(document).ready(function(){
-  $('.carousel-slide').slick({
-    slidesToShow: 5,
-    slidesToScroll: 5,
-    autoplay: true,
-    autoplaySpeed: 3000,
-    arrows: false,
-    infinite: true,
-    pauseOnHover: true,
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: { slidesToShow: 4 }
-      },
-      {
-        breakpoint: 768,
-        settings: { slidesToShow: 2 }
-      },
-      {
-        breakpoint: 480,
-        settings: { slidesToShow: 1 }
-      }
-    ]
-  });
-});
-
-// Player click function
-function handlePlayerClick(playerName) {
-  const userLoggedIn = {{ 'true' if session.get('user') else 'false' }};
-  if (userLoggedIn) {
-    window.location.href = `/player?name=${encodeURIComponent(playerName)}`;
-  } else {
-    alert('You must be logged in to access player stats.');
-    window.location.href = '/login';
+  // Now this runs in the template context, so Jinja works:
+  function handlePlayerClick(playerName) {
+    const userLoggedIn = {{ session.get('user') is not none | tojson }};
+    if (userLoggedIn) {
+      window.location.href = `/player?name=${encodeURIComponent(playerName)}`;
+    } else {
+      alert('You must be logged in to access player stats.');
+      window.location.href = '/login';
+    }
   }
-}
 </script>
+
 {% endblock %}

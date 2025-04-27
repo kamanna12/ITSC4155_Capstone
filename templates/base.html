@@ -6,6 +6,7 @@
     <title>{% block title %}NBA Analytics{% endblock %}</title>
     <!-- Include Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     {% block head %}{% endblock %}
   </head>
   <body class="bg-gray-900 text-white">
