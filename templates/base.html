@@ -9,7 +9,7 @@
     {% block head %}{% endblock %}
   </head>
   <body class="bg-gray-900 text-white">
-    
+  <!-- <img src="/static/images/logo.png" alt="DribbleData" class="h-64 mx-auto mb-2" /> -->
 
 {% if request.endpoint != 'home_page' %}
   <div class="absolute top-4 left-4">
@@ -26,7 +26,8 @@
 
     <!-- Chatbot -->
     <div id="chatbot-container" class="fixed bottom-6 right-6">
-      <button id="chatbot-toggle" class="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full shadow-lg">
+      <button id="chatbot-toggle" class="bg-[#262525] hover:bg-gray-700 text-white p-4 rounded-full flex items-center">
+        <img src="/static/images/basketball.png" alt="Basketball" class="h-6 w-6 mr-2" />
         Chat
       </button>
       <div id="chatbot-window" class="hidden fixed bottom-20 right-6 max-w-sm w-full bg-gray-800 rounded shadow-lg overflow-hidden">

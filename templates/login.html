@@ -16,14 +16,17 @@
     <div class="bg-gray-800 p-8 rounded shadow-lg max-w-sm w-full">
         <h1 class="text-3xl font-bold mb-6 text-center">Login</h1>
         {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
+        {% if messages %}
+          {% for category, message in messages %}
+            {% if category == 'danger' or category == 'success' %}
               <div class="mb-4 p-3 rounded text-white bg-{{ 'red-600' if category == 'danger' else 'green-600' }}">
                   {{ message }}
               </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      
         <form method="POST" class="flex flex-col space-y-4">
             <input type="text" name="username" placeholder="Username" class="px-3 py-2 bg-gray-700 rounded" required>
             <input type="password" name="password" placeholder="Password" class="px-3 py-2 bg-gray-700 rounded" required>

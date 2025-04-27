@@ -1,42 +1,137 @@
 {% extends "base.html" %}
 
-{% block title %}
-NBA Stats Home
-{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
-<!-- Main Home Page Content -->
-<div class="flex items-center justify-center h-screen">
-  <div class="w-full h-full hero-bg flex items-center justify-center bg-black bg-opacity-60">
-    <div class="bg-black bg-opacity-50 p-8 rounded text-center max-w-lg">
-      <h1 class="text-5xl font-bold mb-6">Welcome to NBA Stats Explorer</h1>
-      <p class="text-gray-300 mb-6">
-        Explore detailed stats, charts, and headshots of your favorite NBA players.
-      </p>
-      <a href="{{ url_for('search_page') }}"
-         class="inline-block px-6 py-3 text-lg bg-blue-600 rounded hover:bg-blue-700 transition-colors {% if not session.get('user') %} opacity-50 cursor-not-allowed {% endif %}"
-         {% if not session.get('user') %} onclick="event.preventDefault();" {% endif %}>
-         Get Started
-      </a>
-      <a href="{{ url_for('signup') }}"
-         class="inline-block mt-4 px-6 py-3 text-lg bg-green-600 rounded hover:bg-green-700 transition-colors">
-         Signup
-      </a>
-      <a href="{{ url_for('login') }}"
-         class="inline-block mt-4 px-6 py-3 text-lg bg-green-600 rounded hover:bg-green-700 transition-colors">
-         Login
-      </a>
-      {% if session.get('user') %}
-      <a href="{{ url_for('logout') }}"
-         class="inline-block mt-4 px-6 py-3 text-lg bg-red-600 rounded hover:bg-red-700 transition-colors">
-         Logout
-      </a>
-      <a href="{{ url_for('compare_players') }}"
-         class="inline-block mt-4 px-6 py-3 text-lg bg-yellow-600 rounded hover:bg-yellow-700 transition-colors">
-         Compare Players
-      </a>
-      {% endif %}
+<div class="flex flex-col items-center justify-center min-h-screen p-6">
+  <div class="text-center mb-6">
+    <img src="/static/images/logo.png" alt="DribbleData" class="mx-auto h-64 mb-2" />
+  </div>
+
+  <!-- Carousel -->
+  <div class="relative w-full max-w-6xl overflow-hidden mb-8">
+    <div class="carousel-slide">
+      {% set players = [
+        {'name': 'LeBron James', 'image': '/static/images/lebron.jpg'},
+        {'name': 'Stephen Curry', 'image': '/static/images/curry.jpg'},
+        {'name': 'Kevin Durant', 'image': '/static/images/durant.jpg'},
+        {'name': 'Anthony Edwards', 'image': '/static/images/edwards.jpg'},
+        {'name': 'Giannis Antetokounmpo', 'image': '/static/images/giannis.jpg'},
+        {'name': 'Victor Wembanyama', 'image': '/static/images/wemby.jpg'},
+        {'name': 'James Harden', 'image': '/static/images/harden.jpg'},
+        {'name': 'Ja Morant', 'image': '/static/images/jamorant.jpg'},
+        {'name': 'Kyrie Irving', 'image': '/static/images/kyrie.jpg'},
+        {'name': 'Devin Booker', 'image': '/static/images/booker.jpg'},
+        {'name': 'Klay Thompson', 'image': '/static/images/klay.jpg'},
+        {'name': 'Paul George', 'image': '/static/images/paul.jpg'}
+      ] %}
+      {% for player in players %}
+      <div class="p-2 relative group cursor-pointer" onclick="handlePlayerClick('{{ player.name }}')">
+        <img src="{{ player.image }}" alt="{{ player.name }}"
+             class="h-80 w-48 object-cover rounded shadow-lg group-hover:opacity-80 transition-transform" />
+        <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black bg-opacity-50 rounded">
+          <span class="text-white text-xl font-bold">{{ player.name }}</span>
+        </div>
+      </div>
+      {% endfor %}
     </div>
   </div>
+
+  <!-- Buttons -->
+  <div class="flex flex-col md:flex-row gap-6">
+    {% if session.get('user') %}
+      <a href="{{ url_for('search_page') }}"
+         class="px-8 py-3 text-white text-xl rounded"
+         class="px-8 py-3 text-white text-xl rounded shadow-lg"
+         style="background-color: #322110;"
+         onmouseover="this.style.backgroundColor='#5a3a1f'"
+         onmouseout="this.style.backgroundColor='#3C2814'">
+         SEARCH
+      </a>
+
+      <a href="{{ url_for('compare_players') }}"
+         class="px-8 py-3 text-white text-xl rounded"
+         class="px-8 py-3 text-white text-xl rounded shadow-lg"
+         style="background-color: #322110;"
+         onmouseover="this.style.backgroundColor='#5a3a1f'"
+         onmouseout="this.style.backgroundColor='#3C2814'">
+         COMPARE PLAYERS
+      </a>
+
+      <a href="{{ url_for('logout') }}"
+         class="px-8 py-3 text-white text-xl rounded"
+         class="px-8 py-3 text-white text-xl rounded shadow-lg"
+         style="background-color: #262525;"
+         onmouseover="this.style.backgroundColor='#b91c1c'"
+         onmouseout="this.style.backgroundColor='#dc2626'">
+         LOGOUT
+      </a>
+    {% else %}
+      <a href="{{ url_for('signup') }}"
+         class="px-8 py-3 text-white text-xl rounded"
+         class="px-8 py-3 text-white text-xl rounded shadow-lg"
+         style="background-color: #262525;"
+         onmouseover="this.style.backgroundColor='#15803d'"
+         onmouseout="this.style.backgroundColor='#16a34a'">
+         SIGN UP
+      </a>
+
+      <a href="{{ url_for('login') }}"
+         class="px-8 py-3 text-white text-xl rounded"
+         class="px-8 py-3 text-white text-xl rounded shadow-lg"
+         style="background-color: #262525;"
+         onmouseover="this.style.backgroundColor='#1d4ed8'"
+         onmouseout="this.style.backgroundColor='#2563eb'">
+         LOGIN
+      </a>
+    {% endif %}
+  </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Load Slick Carousel -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+
+<script>
+$(document).ready(function(){
+  $('.carousel-slide').slick({
+    slidesToShow: 5,
+    slidesToScroll: 5,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: false,
+    infinite: true,
+    pauseOnHover: true,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: { slidesToShow: 4 }
+      },
+      {
+        breakpoint: 768,
+        settings: { slidesToShow: 2 }
+      },
+      {
+        breakpoint: 480,
+        settings: { slidesToShow: 1 }
+      }
+    ]
+  });
+});
+
+// Player click function
+function handlePlayerClick(playerName) {
+  const userLoggedIn = {{ 'true' if session.get('user') else 'false' }};
+  if (userLoggedIn) {
+    window.location.href = `/player?name=${encodeURIComponent(playerName)}`;
+  } else {
+    alert('You must be logged in to access player stats.');
+    window.location.href = '/login';
+  }
+}
+</script>
 {% endblock %}
