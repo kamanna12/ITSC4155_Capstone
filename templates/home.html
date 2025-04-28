@@ -99,7 +99,6 @@
 
 
 <script>
-  // Now this runs in the template context, so Jinja works:
   function handlePlayerClick(playerName) {
     const userLoggedIn = {{ session.get('user') is not none | tojson }};
     if (userLoggedIn) {

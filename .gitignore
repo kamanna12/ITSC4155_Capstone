@@ -5,6 +5,3 @@ __pycache__/
 instance/
 .env
 .idea
-.github
-pytest.ini
-tests

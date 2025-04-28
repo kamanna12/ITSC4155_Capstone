@@ -12,12 +12,11 @@ $(document).ready(function(){
     });
   
     function styleSlides(slickObj) {
-      const total = slickObj.options.slidesToShow;       // 5
+      const total = slickObj.options.slidesToShow;       
       const start = slickObj.currentSlide;               // index of the first visible slide
-      // First, fade _all_ slides
       slickObj.$slides.css({ opacity: 0.2, transform: 'scale(1)' });
   
-      // Then “pop” only the middle three of the five
+      
       [1,2,3].forEach(offset => {
         const idx = start + offset;
         $(slickObj.$slides.get(idx)).css({
