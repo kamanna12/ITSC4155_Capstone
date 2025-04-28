@@ -1,10 +1,10 @@
 $(document).ready(function(){
-    const $slider = $('.carousel-slide').slick({
+    $('.carousel-slide').slick({
       slidesToShow: 5,
       slidesToScroll: 1,
       autoplay: true,
-      autoplaySpeed: 3000,
-      speed: 1000,
+      autoplaySpeed: 1,
+      speed: 10000,
       cssEase: 'ease-in-out',
       arrows: true,
       infinite: true,

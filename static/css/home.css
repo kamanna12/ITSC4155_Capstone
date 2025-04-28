@@ -1,15 +1,6 @@
 /* static/css/home.css */
 .carousel-slide .slick-slide {
-    transition: opacity 0.3s, transform 0.3s;
-  }
-  
-  .carousel-slide .slick-slide.is-neighbor {
-    opacity: 1 !important;                  /* un-fade the two beside the center */
-  }
-  
-  .carousel-slide .slick-slide.is-center {
-    opacity: 1 !important;                  /* full pop on the very center */
-    transform: scale(1.05);                 /* slight zoom to emphasize */
+    transition: opacity 0.001s, transform 0.001s;
   }
   
 /* ensure we can see even scaled-up slides past the container */
