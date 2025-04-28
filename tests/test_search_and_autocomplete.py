@@ -54,20 +54,12 @@ def test_sql_injection_login_prevent_bypass(client):
     assert b"Invalid credentials" in rv.data
 
 def test_xss_protection_in_player_error(logged_in_client):
-    """
-    Ensure that a script‐tag payload in the 'name' param
-    is escaped, not rendered, in the HTML.
-    """
     payload = "<script>alert('xss')</script>"
     escaped = "&lt;script&gt;alert(&#39;xss&#39;)&lt;/script&gt;"
 
     rv = logged_in_client.get(f"/player?name={quote_plus(payload)}")
     html = rv.data.decode('utf-8')
-
-    # 1) The raw payload must NOT appear
     assert payload not in html
-
-    # 2) The *exact* Jinja2-escaped version *must* appear
     assert escaped in html
 
 
@@ -85,12 +77,6 @@ def test_command_injection_attempt_search(logged_in_client):
     assert rv.status_code == 302
 
     location = rv.headers['Location']
-    # 1) No raw backticks in the URL
     assert "`" not in location
-
-    # 2) The backticks ARE percent‐encoded (%60)
     assert "%60rm" in location
-
-    # 3) The slash remains unencoded (Werkzeug treats '/' as safe)
-    #    so we expect "...%2F%60" NOT necessarily; instead we see "/"
     assert location.startswith("/player?name=%60")
