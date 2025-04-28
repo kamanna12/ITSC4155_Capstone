@@ -112,44 +112,47 @@ def player_stats():
     if not player_name:
         return redirect(url_for("home_page"))
 
-    all_players = players.get_players()
-    matched = [p for p in all_players if player_name.lower() in p["full_name"].lower()]
-    if not matched:
-        return render_template("index.html", error=f"No NBA player found matching '{player_name}'")
+    match = next((p for p in players.get_players()
+                if player_name.lower() in p["full_name"].lower()), None)
+    if not match:
+        return render_template("index.html",
+                            error=f"No NBA player found matching '{player_name}'")
+    player_id = match["id"]
 
-    player_id = matched[0]["id"]
-    info = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
-    row = info.common_player_info.get_dict()["data"][0]
+    info   = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
+    career = playercareerstats.PlayerCareerStats(player_id=player_id)
 
-    birth_str = row[6]
-    computed_age = None
-    if birth_str and birth_str.count("-") == 2:
-        try:
-            bdate = datetime.strptime(birth_str, "%Y-%m-%d")
-            today = datetime.now()
-            computed_age = today.year - bdate.year - ((today.month, today.day) < (bdate.month, bdate.day))
-        except ValueError:
-            computed_age = None
+    bio_df     = info.get_data_frames()[0]          
+    birth_str  = bio_df.loc[0, "BIRTHDATE"]        
+    birth_str  = birth_str[:10]                    
+    try:
+        bdate = datetime.strptime(birth_str, "%Y-%m-%d").date()
+        today = datetime.today().date()
+        computed_age = today.year - bdate.year - (
+            (today.month, today.day) < (bdate.month, bdate.day)
+        )
+    except ValueError:
+        computed_age = None
 
-    team_id = row[16]
-    team_logo_url = f"https://cdn.nba.com/logos/nba/{team_id}/primary/L/logo.svg" if team_id else "/static/images/fallback-team.png"
+    team_id        = bio_df.loc[0, "TEAM_ID"]
+    team_logo_url  = f"https://cdn.nba.com/logos/nba/{team_id}/primary/L/logo.svg" \
+                    if team_id else "/static/images/fallback-team.png"
 
-    career_stats = playercareerstats.PlayerCareerStats(player_id=player_id)
-    df = career_stats.get_data_frames()[0]
-    df = df[df["SEASON_ID"] != "Career"]
+    season_df = career.get_data_frames()[0]
+    season_df = season_df[season_df["SEASON_ID"] != "Career"]
 
-    labels = df["SEASON_ID"].tolist()
-    points_per_game = df["PTS"].tolist()
-    rebounds_per_game = df["REB"].tolist()
-    assists_per_game = df["AST"].tolist()
-    steals_per_game = df["STL"].tolist()
-    blocks_per_game = df["BLK"].tolist()
-    fg_percentage = (df["FG_PCT"] * 100).tolist()
+    labels            = season_df["SEASON_ID"].tolist()
+    points_per_game   = season_df["PTS"].tolist()
+    rebounds_per_game = season_df["REB"].tolist()
+    assists_per_game  = season_df["AST"].tolist()
+    steals_per_game   = season_df["STL"].tolist()
+    blocks_per_game   = season_df["BLK"].tolist()
+    fg_percentage     = (season_df["FG_PCT"] * 100).tolist()
 
     return render_template(
         "index.html",
         error=None,
-        player_data=row,
+        player_data=bio_df.iloc[0].tolist(),
         computed_age=computed_age,
         team_logo_url=team_logo_url,
         chart_labels=labels,
@@ -158,7 +161,7 @@ def player_stats():
         chart_assists=assists_per_game,
         chart_steals=steals_per_game,
         chart_blocks=blocks_per_game,
-        chart_fgpct=fg_percentage
+        chart_fgpct=fg_percentage,
     )
 
 @app.route('/compare', methods=['GET', 'POST'])
@@ -200,10 +203,10 @@ def compare_results():
         return redirect(url_for("compare_players"))
 
     return render_template('compare_player_results.html',
-                       name1=name1, stats1=stats1,
-                       name2=name2, stats2=stats2,
-                       stats1_json=stats1.to_dict(orient='records'),
-                       stats2_json=stats2.to_dict(orient='records'))
+                    name1=name1, stats1=stats1,
+                    name2=name2, stats2=stats2,
+                    stats1_json=stats1.to_dict(orient='records'),
+                    stats2_json=stats2.to_dict(orient='records'))
 
 @app.route('/chat', methods=['POST'])
 def chatbot():
