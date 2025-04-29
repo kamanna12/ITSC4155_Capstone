@@ -191,7 +191,7 @@ def compare_results():
         if not match:
             return None, None
         pid = match['id']
-        game_log = playergamelog.PlayerGameLog(player_id=pid).get_data_frames()[0]
+        game_log = playergamelog.PlayerGameLog(player_id=pid, season_type_all_star="Playoffs").get_data_frames()[0]
         last_5 = game_log[['GAME_DATE', 'PTS', 'AST', 'REB']].head(5)
         return match['full_name'], last_5
 
