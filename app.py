@@ -119,12 +119,28 @@ def player_stats():
                             error=f"No NBA player found matching '{player_name}'")
     player_id = match["id"]
 
-    info   = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
-    career = playercareerstats.PlayerCareerStats(player_id=player_id)
+    # Fetch the last 5 games
+    game_log = playergamelog.PlayerGameLog(
+    player_id=player_id,
+    season_type_all_star='Playoffs'
+    ).get_data_frames()[0]
+    last_5_games = game_log[['GAME_DATE', 'PTS', 'AST', 'REB', 'STL', 'BLK', 'FG3M']].dropna().head(5)
 
-    bio_df     = info.get_data_frames()[0]          
-    birth_str  = bio_df.loc[0, "BIRTHDATE"]        
-    birth_str  = birth_str[:10]                    
+    # Process the stats
+    labels = last_5_games['GAME_DATE'].tolist()
+    points_per_game = last_5_games['PTS'].tolist()
+    assists_per_game = last_5_games['AST'].tolist()
+    rebounds_per_game = last_5_games['REB'].tolist()
+    steals_per_game = last_5_games['STL'].tolist()
+    blocks_per_game = last_5_games['BLK'].tolist()
+    three_pointers_made = last_5_games['FG3M'].tolist()
+
+
+    # Get player bio
+    info = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
+    bio_df = info.get_data_frames()[0]          
+    birth_str = bio_df.loc[0, "BIRTHDATE"]        
+    birth_str = birth_str[:10]                    
     try:
         bdate = datetime.strptime(birth_str, "%Y-%m-%d").date()
         today = datetime.today().date()
@@ -134,35 +150,24 @@ def player_stats():
     except ValueError:
         computed_age = None
 
-    team_id        = bio_df.loc[0, "TEAM_ID"]
-    team_logo_url  = f"https://cdn.nba.com/logos/nba/{team_id}/primary/L/logo.svg" \
+    team_id = bio_df.loc[0, "TEAM_ID"]
+    team_logo_url = f"https://cdn.nba.com/logos/nba/{team_id}/primary/L/logo.svg" \
                     if team_id else "/static/images/fallback-team.png"
 
-    season_df = career.get_data_frames()[0]
-    season_df = season_df[season_df["SEASON_ID"] != "Career"]
-
-    labels            = season_df["SEASON_ID"].tolist()
-    points_per_game   = season_df["PTS"].tolist()
-    rebounds_per_game = season_df["REB"].tolist()
-    assists_per_game  = season_df["AST"].tolist()
-    steals_per_game   = season_df["STL"].tolist()
-    blocks_per_game   = season_df["BLK"].tolist()
-    fg_percentage     = (season_df["FG_PCT"] * 100).tolist()
-
     return render_template(
-        "index.html",
-        error=None,
-        player_data=bio_df.iloc[0].tolist(),
-        computed_age=computed_age,
-        team_logo_url=team_logo_url,
-        chart_labels=labels,
-        chart_points=points_per_game,
-        chart_rebounds=rebounds_per_game,
-        chart_assists=assists_per_game,
-        chart_steals=steals_per_game,
-        chart_blocks=blocks_per_game,
-        chart_fgpct=fg_percentage,
-    )
+    "index.html",
+    error=None,
+    player_data=bio_df.iloc[0].tolist(),
+    computed_age=computed_age,
+    team_logo_url=team_logo_url,
+    chart_labels=labels,
+    chart_points=points_per_game,
+    chart_rebounds=rebounds_per_game,
+    chart_assists=assists_per_game,
+    chart_steals=steals_per_game,
+    chart_blocks=blocks_per_game,
+    chart_3pt=three_pointers_made,
+)
 
 @app.route('/compare', methods=['GET', 'POST'])
 @login_required
