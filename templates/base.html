@@ -10,7 +10,13 @@
     {% block head %}{% endblock %}
   </head>
   <body class="bg-gray-900 text-white">
-  <!-- <img src="/static/images/logo.png" alt="DribbleData" class="h-64 mx-auto mb-2" /> -->
+
+  <div class="text-center mb-6">
+  <a href="/">
+    <img src="/static/images/logo.png" alt="DribbleData" class="mx-auto h-32 mb-2 hover:opacity-80 transition duration-200" />
+  </a>
+</div>
+
 
 {% if request.endpoint != 'home_page' %}
   <div class="absolute top-4 left-4">
