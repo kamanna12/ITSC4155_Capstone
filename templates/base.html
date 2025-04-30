@@ -4,34 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}NBA Analytics{% endblock %}</title>
-    <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='images/basketball_favicon.png') }}" type="image/x-icon" />
-    <!-- Include Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     {% block head %}{% endblock %}
   </head>
+
   <body class="bg-gray-900 text-white">
 
-  <div class="text-center mb-6">
-  <a href="/">
-    <img src="/static/images/logo.png" alt="DribbleData" class="mx-auto h-32 mb-2 hover:opacity-80 transition duration-200" />
-  </a>
-</div>
+    <div class="text-center mb-6">
+      <a href="/">
+        <img src="/static/images/logo.png" alt="DribbleData" class="mx-auto h-32 mb-2 hover:opacity-80 transition duration-200" />
+      </a>
+    </div>
 
+    {% if request.endpoint != 'home_page' %}
+      <div class="absolute top-4 left-4">
+        <a href="javascript:history.back()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white transition">
+          ← Back
+        </a>
+      </div>
+    {% endif %}
 
-{% if request.endpoint != 'home_page' %}
-  <div class="absolute top-4 left-4">
-    <a href="javascript:history.back()" 
-       class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white transition">
-       ← Back
-    </a>
-  </div>
-{% endif %}
-
-
-    {% block content %}
-    {% endblock %}
+    {% block content %}{% endblock %}
 
     <!-- Chatbot -->
     <div id="chatbot-container" class="fixed bottom-6 right-6">
@@ -39,20 +34,23 @@
         <img src="/static/images/basketball.png" alt="Basketball" class="h-6 w-6 mr-2" />
         Chat
       </button>
+
       <div id="chatbot-window" class="hidden fixed bottom-20 right-6 max-w-sm w-full bg-gray-800 rounded shadow-lg overflow-hidden">
         <div class="p-4 border-b border-gray-700">
           <h3 class="text-lg font-bold">How can I help you?</h3>
         </div>
+
         <div id="chatbot-messages" class="p-4 h-64 overflow-y-auto"></div>
-        <form id="chatbot-form" class="flex border-t border-gray-700">
+
+        <form id="chatbot-form" class="flex border-t border-gray-700 items-center">
           <input type="text" id="chatbot-input" placeholder="Type your question..."
                  class="flex-grow p-3 bg-gray-700 text-white outline-none" />
+          <button id="chatbot-clear" type="button" class="text-red-400 px-3 hover:text-red-600">Clear</button>
           <button type="submit" class="bg-blue-600 hover:bg-blue-700 p-3">Send</button>
         </form>
       </div>
     </div>
 
-    <!-- Load external JavaScript for chatbot  -->
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
     {% block scripts %}{% endblock %}
   </body>

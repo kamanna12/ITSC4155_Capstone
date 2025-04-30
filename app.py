@@ -5,6 +5,13 @@ from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
+from dotenv import load_dotenv
+import os
+import openai
+from openai import OpenAI
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
@@ -213,31 +220,29 @@ def compare_results():
                     stats1_json=stats1.to_dict(orient='records'),
                     stats2_json=stats2.to_dict(orient='records'))
 
+
+client = OpenAI()
+
 @app.route('/chat', methods=['POST'])
 def chatbot():
     data = request.get_json()
-    if not data or 'query' not in data:
-        return jsonify({'response': 'Invalid query provided.'}), 400
+    messages = data.get("messages")
 
-    query = data['query'].strip().lower()
-    
-    if "compare" in query:
-        response_text = (
-            "You can compare players using our Compare Players page. "
-            "Just click on the 'Compare Players' button to get started!"
+    if not messages or not isinstance(messages, list):
+        return jsonify({'response': 'Invalid message format.'}), 400
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=messages
         )
-    elif "login" in query:
-        response_text = "You can log in to your account by visiting our Login page."
-    elif "signup" in query or "sign up" in query or "account" in query:
-        response_text = "If you don't have an account yet, you can sign up on our Signup page!"
-    elif "stats" in query:
-        response_text = "You can check player stats by visiting our Search page."
-    elif any(greeting in query for greeting in ["hi", "hello", "hey"]):
-        response_text = "Hello! How can I help you today?"
-    else:
-        response_text = "I'm not sure I understand that. Could you try rephrasing?"
+        reply = response.choices[0].message.content.strip()
+        return jsonify({'response': reply})
+    except Exception as e:
+        print(f"OpenAI API error: {e}")
+        return jsonify({'response': 'Sorry, something went wrong with the assistant.'}), 500
 
-    return jsonify({'response': response_text})
+
 
 @app.route('/chat_page')
 def chat_page():

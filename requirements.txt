@@ -7,3 +7,5 @@ flask_sqlalchemy
 gunicorn
 matplotlib
 pytest
+openai
+python-dotenv
