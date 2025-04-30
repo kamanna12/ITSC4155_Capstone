@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import os
 import openai
 from openai import OpenAI
+from dotenv import load_dotenv
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -16,7 +17,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = '824ecdf1b10812100f44e23c1bace70e'
+app.secret_key = os.getenv("SECRET_KEY")
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 
 ALL_PLAYERS = players.get_players()
