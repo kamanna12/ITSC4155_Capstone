@@ -25,33 +25,27 @@
     <div class="flex flex-col items-center p-6">
 
         {% if error %}
-        <!-- If no match found for the player -->
         <div class="bg-red-600 text-white p-4 rounded mb-4">
             {{ error }}
         </div>
         <a href="/" class="text-blue-400 hover:underline mt-4">Go Back</a>
 
         {% elif player_data %}
-        <!-- PLAYER IMAGE -->
         <img src="https://cdn.nba.com/headshots/nba/latest/1040x760/{{ player_data[0] }}.png" alt="Player Headshot"
             class="w-40 h-40 object-cover rounded-full shadow-lg"
             onerror="this.onerror=null; this.src='/static/images/fallback.png';" />
 
-        <!-- PLAYER NAME -->
         <h1 class="text-4xl font-bold mt-4">
             {{ player_data[3] }}
         </h1>
 
-        <!-- BACK BUTTON -->
-<div class="absolute top-4 left-4">
-    <a href="javascript:history.back()" 
-       class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white transition">
-       ← Back
-    </a>
-  </div>
-  
+        <div class="absolute top-4 left-4">
+            <a href="javascript:history.back()" 
+               class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-white transition">
+               ← Back
+            </a>
+        </div>
 
-        <!-- BASIC INFO -->
         <p class="mt-2 text-gray-300">
             Age:
             {% if computed_age %}
@@ -67,39 +61,32 @@
             Exp: {{ player_data[13] }}
         </p>
 
-        <!-- CHARTS -->
         <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6 w-full max-w-5xl">
-            <!-- Points Chart -->
             <div id="pointsChartWrapper" class="bg-gray-800 p-4 rounded shadow cursor-pointer">
                 <h3 class="text-xl font-bold mb-2 text-center">Points Per Game</h3>
                 <canvas id="pointsChart"></canvas>
             </div>
-            <!-- Rebounds Chart -->
             <div id="reboundsChartWrapper" class="bg-gray-800 p-4 rounded shadow cursor-pointer">
                 <h3 class="text-xl font-bold mb-2 text-center">Rebounds Per Game</h3>
                 <canvas id="reboundsChart"></canvas>
             </div>
-            <!-- Assists Chart -->
             <div id="assistsChartWrapper" class="bg-gray-800 p-4 rounded shadow cursor-pointer">
                 <h3 class="text-xl font-bold mb-2 text-center">Assists Per Game</h3>
                 <canvas id="assistsChart"></canvas>
             </div>
         </div>
 
-        <!-- Second Row Charts -->
-        <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-6 w-full max-w-5xl">
-            <div id="stealsChartWrapper" class="bg-gray-800 p-4 rounded shadow cursor-pointer">
+        <div class="mt-8 flex flex-wrap justify-center gap-6 w-full max-w-4xl">
+            <div id="stealsChartWrapper" class="bg-gray-800 p-4 rounded shadow cursor-pointer w-full sm:w-80">
                 <h3 class="text-xl font-bold mb-2 text-center">Steals Per Game</h3>
                 <canvas id="stealsChart"></canvas>
             </div>
-            <div id="blocksChartWrapper" class="bg-gray-800 p-4 rounded shadow cursor-pointer">
+            <div id="blocksChartWrapper" class="bg-gray-800 p-4 rounded shadow cursor-pointer w-full sm:w-80">
                 <h3 class="text-xl font-bold mb-2 text-center">Blocks Per Game</h3>
                 <canvas id="blocksChart"></canvas>
             </div>
-            
         </div>
 
-        <!-- Search Again -->
         <div class="mt-8">
             <a href="/search" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
                 Search Another Player
@@ -112,7 +99,7 @@
         {% endif %}
     </div>
 
-    <!-- Modal for Expanded Charts -->
+    <!-- Modal -->
     <div id="chartModal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center">
         <div class="bg-gray-800 p-6 rounded relative max-w-4xl w-full">
             <button id="closeModalBtn"
@@ -126,7 +113,6 @@
         </div>
     </div>
 
-    <!-- Chart Script -->
     <script>
         const labels = {{ chart_labels|default ([]) | tojson }};
         const pointsData = {{ chart_points|default ([]) | tojson }};
@@ -134,69 +120,63 @@
         const assistsData = {{ chart_assists|default ([]) | tojson }};
         const stealsData = {{ chart_steals|default ([]) | tojson }};
         const blocksData = {{ chart_blocks|default ([]) | tojson }};
-        const threePMData = {{ chart_3pm|default ([]) | tojson }};
 
         let modalChart = null;
+        const chartInstances = {};
 
         window.addEventListener('DOMContentLoaded', () => {
             const options = { responsive: true, scales: { y: { beginAtZero: true } } };
 
-            new Chart(document.getElementById('pointsChart').getContext('2d'), {
+            chartInstances['pointsChart'] = new Chart(document.getElementById('pointsChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels, datasets: [{ label: 'Points Per Game', data: pointsData, backgroundColor: 'rgba(75, 192, 192, 0.6)' }] },
                 options
             });
-            new Chart(document.getElementById('reboundsChart').getContext('2d'), {
+
+            chartInstances['reboundsChart'] = new Chart(document.getElementById('reboundsChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels, datasets: [{ label: 'Rebounds Per Game', data: reboundsData, backgroundColor: 'rgba(255, 99, 132, 0.6)' }] },
                 options
             });
-            new Chart(document.getElementById('assistsChart').getContext('2d'), {
+
+            chartInstances['assistsChart'] = new Chart(document.getElementById('assistsChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels, datasets: [{ label: 'Assists Per Game', data: assistsData, backgroundColor: 'rgba(255, 206, 86, 0.6)' }] },
                 options
             });
-            new Chart(document.getElementById('stealsChart').getContext('2d'), {
+
+            chartInstances['stealsChart'] = new Chart(document.getElementById('stealsChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels, datasets: [{ label: 'Steals Per Game', data: stealsData, backgroundColor: 'rgba(153, 102, 255, 0.6)' }] },
                 options
             });
-            new Chart(document.getElementById('blocksChart').getContext('2d'), {
+
+            chartInstances['blocksChart'] = new Chart(document.getElementById('blocksChart').getContext('2d'), {
                 type: 'bar',
                 data: { labels, datasets: [{ label: 'Blocks Per Game', data: blocksData, backgroundColor: 'rgba(255, 159, 64, 0.6)' }] },
-                options
-            });
-            new Chart(document.getElementById('threePMChart').getContext('2d'), {
-                type: 'bar',
-                data: {
-                labels,
-                datasets: [{
-                label: '3 Pointers Made Per Game',
-                data: threePMData,
-                backgroundColor: 'rgba(0, 200, 200, 0.6)'
-                 }]
-                },
                 options
             });
 
             document.querySelectorAll('[id$="ChartWrapper"]').forEach(wrapper => {
                 wrapper.addEventListener('click', () => {
-                    const canvasId = wrapper.querySelector("canvas").id;
-                    const chartInstance = Chart.getChart(canvasId);
-                    openModalChart(chartInstance, wrapper.querySelector("h3").innerText + " (Expanded)");
+                    const canvas = wrapper.querySelector("canvas");
+                    const chartInstance = chartInstances[canvas.id];
+                    if (chartInstance) {
+                        openModalChart(chartInstance, wrapper.querySelector("h3").innerText + " (Expanded)");
+                    }
                 });
             });
         });
 
-        const chartModal = document.getElementById('chartModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalCanvas = document.getElementById('modalCanvas');
-
         function openModalChart(chart, titleText) {
+            const chartModal = document.getElementById('chartModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalCanvas = document.getElementById('modalCanvas');
+
             chartModal.classList.remove('hidden');
             chartModal.classList.add('flex');
             modalTitle.innerText = titleText;
+
             if (modalChart) modalChart.destroy();
             modalChart = new Chart(modalCanvas.getContext('2d'), {
                 type: chart.config.type,
@@ -208,7 +188,8 @@
             });
         }
 
-        closeModalBtn.addEventListener('click', () => {
+        document.getElementById('closeModalBtn').addEventListener('click', () => {
+            const chartModal = document.getElementById('chartModal');
             chartModal.classList.add('hidden');
             chartModal.classList.remove('flex');
             if (modalChart) {
