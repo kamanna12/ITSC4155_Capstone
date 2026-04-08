@@ -7,15 +7,16 @@ from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from dotenv import load_dotenv
 import os
-import openai
-from openai import OpenAI
-from dotenv import load_dotenv
+from groq import Groq
 
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
+database_url = os.getenv("DATABASE_URL", "sqlite:///users.db")
+# Neon/Heroku provide 'postgres://' but SQLAlchemy requires 'postgresql://'
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = os.getenv("SECRET_KEY")
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
@@ -223,9 +224,10 @@ def compare_results():
                     stats2_json=stats2.to_dict(orient='records'))
 
 
-client = OpenAI()
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 @app.route('/chat', methods=['POST'])
+@login_required
 def chatbot():
     data = request.get_json()
     messages = data.get("messages")
@@ -235,18 +237,18 @@ def chatbot():
 
     try:
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="llama-3.1-8b-instant",
             messages=messages
         )
         reply = response.choices[0].message.content.strip()
         return jsonify({'response': reply})
     except Exception as e:
-        print(f"OpenAI API error: {e}")
+        print(f"Groq API error: {e}")
         return jsonify({'response': 'Sorry, something went wrong with the assistant.'}), 500
 
 
-
 @app.route('/chat_page')
+@login_required
 def chat_page():
     return render_template("chat.html")
 

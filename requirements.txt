@@ -7,5 +7,6 @@ flask_sqlalchemy
 gunicorn
 matplotlib
 pytest
-openai
+groq
 python-dotenv
+psycopg2-binary
